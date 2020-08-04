@@ -1,0 +1,9 @@
+[ ] Make remote names required
+[ ] Ensure remote name <1024 bytes
+[-] Implement FileIndex requests:
+    {
+      "remote_name": "example_remote_name",
+    }
+[ ] Print errors and warnings using proper lib
+[ ] SSL - requires learning stuff
+[ ] IP update for peers on change

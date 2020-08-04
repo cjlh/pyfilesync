@@ -1,0 +1,17 @@
+{
+    "port": 6688,
+    "aliases": [
+        {
+            "name": "test_2",
+            "ip_address": "localhost",
+            "port": 6689
+        }
+    ],
+    "remotes": [
+        {
+            "name": "test_remote_1",
+            "peers": ["test_2"],
+            "local_path": "/full/path/to/target/dir",
+        }
+    ]
+}
