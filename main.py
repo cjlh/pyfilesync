@@ -28,10 +28,10 @@ class Peer():
 class AliasStore():
     def __init__(self, aliases):
         self.aliases = aliases
-    
+
     def is_known(self, alias):
         return alias in self.aliases
-    
+
     def get_peer(self, alias):
         if self.is_known(alias):
             return self.aliases[alias]
@@ -55,21 +55,22 @@ class Remote():
         self.path = local_path
         self.dir_name = os.path.basename(local_path)
         self.file_index = FileIndex(local_path)
-    
+
     def get_name_string(self):
         return f"remote `{self.name}'" if \
             self.name is not None else 'unnamed remote'
-    
+
     def update(self, alias_store):
         # 1: connect to remote hosts, request json-ified FileIndex objects
         print('Local FileIndex representation:\n  '
-             f'{self.file_index.jsonify()}')
+              f'{self.file_index.jsonify()}')
         file_indexes = {}
         for alias in self.peer_aliases:
             peer = alias_store.get_peer(alias)
             try:
                 file_indexes[alias] = peer.recv_file_index()
             except (ConnectionRefusedError) as e:
+                # TODO: use e?
                 print(f'Warning: Connection refused by peer {peer.name} for '
                       f'remote {self.name} at {peer.ip_address}:{peer.port}')
         # convert to dicts
@@ -111,7 +112,7 @@ class FileIndex():
         for path, file in self.files.items():
             print(f'{lpad}{path}: {file.get_lm_time()}, '
                   f'{file.get_md5sum()}')
-    
+
     def jsonify(self):
         return json.dumps({k: v.jsonify() for k, v in self.files.items()})
 
@@ -121,30 +122,30 @@ class File():
         self.abs_path = os.path.join(root_dir, rel_path)
         self.rel_path = rel_path
         self.md5sum = None
-    
+
     def get_lm_time(self):
         return os.path.getmtime(self.abs_path)
-    
+
     def get_md5sum(self):
         if self.md5sum is None:
             self.update_md5sum()
             return self.md5sum
         else:
             return self.md5sum
-    
+
     def update_md5sum(self):
         with open(self.abs_path, mode='rb') as f:
             d = hashlib.md5()
             for buf in iter(partial(f.read, 128), b''):
                 d.update(buf)
         self.md5sum = d.hexdigest()
-    
+
     def jsonify(self):
         return json.dumps({
             'md5sum': self.get_md5sum(),
             'last_modified': self.get_lm_time()
         })
-    
+
 
 class FileServer(Thread):
     def __init__(self, file_indexes, port):
@@ -157,7 +158,7 @@ class FileServer(Thread):
         self.file_indexes = file_indexes
 
         self.start()
-    
+
     def run(self):
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         server_addr = ('localhost', self.port)
@@ -188,6 +189,7 @@ def load_config(config_path):
         with open(config_path) as f:
             config = json.load(f)
     except (FileNotFoundError) as e:
+        # TODO: use e?
         print(f'Error: Could not load config file `{config_path}`.')
         graceful_exit(1)
 
@@ -196,14 +198,14 @@ def load_config(config_path):
     # TODO: proper validation
     remote_names = set()
     for remote in config['remotes']:
-        if remote['name'] == None or remote['name'] == '':
+        if remote['name'] is None or remote['name'] == '':
             print('Error: Unnamed remote found in config.')
             graceful_exit(1)
         elif remote['name'] in remote_names:
             print(f"Error: Duplicate remote name `{remote['name']}` found.")
             graceful_exit(1)
         remote_names.add(remote['name'])
-    
+
     return config
 
 
@@ -226,7 +228,7 @@ def main(config_path):
             for peer in remote['peers']:
                 if not alias_store.is_known(peer):
                     print(f"Error: Unknown peer `{peer}' in config for "
-                        f"{remote_name}")
+                          f"{remote_name}")
                     graceful_exit(1)
             print('Building index...', end='', flush=True)
             remotes.append(Remote(remote['local_path'], remote['peers'],
@@ -242,7 +244,7 @@ def main(config_path):
         print(f'Checking for updates on {remote.get_name_string()}...')
         # remote.file_index.print_files(lpad='  ')
         remotes[0].update(alias_store)
-    
+
     # 5: open thread to listen for update requests
     file_indexes = {}
     for remote in remotes:
