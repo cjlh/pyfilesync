@@ -1,4 +1,5 @@
 import os
+import argparse
 import socket
 import json
 import hashlib
@@ -182,26 +183,33 @@ def graceful_exit(status=0):
     exit(status)
 
 
-def main():
+def load_config(config_path):
     try:
-        with open('config.json') as f:
+        with open(config_path) as f:
             config = json.load(f)
     except (FileNotFoundError) as e:
-        print('Error: Could not load config.json.')
+        print(f'Error: Could not load config file `{config_path}`.')
         graceful_exit(1)
 
-    # 1: ensure config format valid
-    # TODO: validate
+    # ensure config format valid
     # ensure all remotes are named and there are no duplicates
+    # TODO: proper validation
     remote_names = set()
     for remote in config['remotes']:
         if remote['name'] == None or remote['name'] == '':
-            print('Error: Unnamed remote found in config.json.')
+            print('Error: Unnamed remote found in config.')
             graceful_exit(1)
         elif remote['name'] in remote_names:
             print(f"Error: Duplicate remote name `{remote['name']}` found.")
             graceful_exit(1)
         remote_names.add(remote['name'])
+    
+    return config
+
+
+def main(config_path):
+    # 1: load config
+    config = load_config(config_path)
 
     # 2: Build alias store
     alias_store = AliasStore.from_alias_list(config['aliases'])
@@ -248,7 +256,11 @@ def main():
 
 
 if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--config', type=str, help='load custom config file')
+    args = parser.parse_args()
+    config_path = args.config if args.config else 'config.json'
     try:
-        main()
+        main(config_path)
     except KeyboardInterrupt:
         graceful_exit(0)
