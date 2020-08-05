@@ -364,7 +364,7 @@ def main(config_path):
     for remote in remotes:
         print(f'Checking for updates on {remote.get_name_string()}...')
         # remote.file_index.print_files(lpad='  ')
-        remotes[0].update(alias_store, lpad='  ')
+        remote.update(alias_store, lpad='  ')
 
     # 5: open thread to listen for update requests
     file_indexes = {}
@@ -376,8 +376,9 @@ def main(config_path):
     # 6: start update loop
     while True:
         time.sleep(60 * config['update_interval'])
-        # i:  FileIndex.update
-        # ii: Remote.update
+        for remote in remotes:
+            remote.file_index.update()
+            remote.update(alias_store, lpad='  ')
 
 
 if __name__ == '__main__':
