@@ -18,12 +18,22 @@ def load_config(config_path):
         print(f'Error: Could not load config file `{config_path}\'.')
         graceful_exit(1)
 
+    defaults = {
+        'update_interval': 15,
+        'port': 6688
+    }
+
     # set default update interval if not specified
     if 'update_interval' not in config:
-        default_update_interval = 15
-        print('Warning: Update interval not specified in config, using default value '
-              f'{default_update_interval}.')
-        config['update_interval'] = default_update_interval
+        print("Warning: Update interval not specified in config, using default value "
+              f"{defaults['update_interval']}.")
+        config['update_interval'] = defaults['update_interval']
+
+    # set default port if not specified
+    if 'port' not in config:
+        print("Warning: Port not specified in config, using default value "
+              f"{defaults['port']}.")
+        config['port'] = defaults['port']
 
     # ensure config format valid
     # ensure all remotes are named and there are no duplicates
