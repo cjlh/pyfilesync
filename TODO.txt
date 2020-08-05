@@ -1,7 +1,7 @@
 Short
 -----
 [ ] Test notifications on MacOS
-[ ] Split up monolithic main.py
+[x] Split up monolithic main.py
 [ ] Make remote names required
 [ ] Ensure remote name <1024 bytes
 [x] Implement FileIndex requests
@@ -19,9 +19,10 @@ Medium
 [ ] Think about deletions/renames
     - $ pyfilesync rm <file>
     - $ pyfilesync mv <current> <new>
+[ ] Tray icon
 [ ] IP update for peers on change
 [ ] SSL - requires learning stuff
 
 Long
 ----
-[ ] Send only changes in files?
+[ ] Look into exchanging only file modifications

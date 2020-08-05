@@ -1,0 +1,11 @@
+# Python bytecode files
+*/**/*.pyc
+*/**/__pycache__
+
+# Virtual environments
+venv/
+*/**/venv
+
+# Vim swapfiles
+*/**/*.swp
+
