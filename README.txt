@@ -1,5 +1,8 @@
 pyfilesync
 
+Status:
+- DO NOT USE. Will only sync top-level files.
+
 What it is:
 - Sync selected library directories between computers (e.g. books, music, config files) peer-to-peer.
 
