@@ -14,8 +14,8 @@ Setup:
 - Setup virtualenv, e.g.:
   * virtualenv -p python3 venv && source venv/bin/activate
   * pip install -r requirements.txt
-- For existing remote dir
+- To pull new dir from peer:
   * Specify non-existent or empty target directory, will pull from peers
-- For new local dir:
+- To copy new dir to peers:
   * Specify local dir as target directory
   * Follow remote step for other PCs
