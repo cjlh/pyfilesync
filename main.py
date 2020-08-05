@@ -8,6 +8,8 @@ import time
 import tempfile
 from threading import Thread
 
+from notifypy import Notify
+
 
 class Peer():
     def __init__(self, name, ip_address, port):
@@ -156,6 +158,9 @@ class Remote():
             # move new
             os.rename(os.path.join(temp_dir, filename), target_path)
             print(f'{lpad}Updated file `{filename}.\'')
+            update_message = f"{self.name}: Updated file {filename} from peer " \
+                             f"{latest_changes[filename]['peer_alias']}"
+            send_desktop_notification(update_message)
         # 5: update FileIndex
         self.file_index.update()
 
@@ -254,6 +259,13 @@ class FileServer(Thread):
             parsed_data = json.loads(data)
             print(f'  [recv] request: {parsed_data}')
             # TODO: validate request
+            if 'remote_name' in parsed_data:
+                print(f'  Updating FileIndex...')
+                self.file_indexes[parsed_data['remote_name']].update()
+            else:
+                print('  Error: No remote name specified. Abandoning')
+                conn.close()
+                continue
             if parsed_data['request_type'] == 0:
                 # request FileIndex
                 remote_name = parsed_data['remote_name']
@@ -275,6 +287,13 @@ def get_timestamp():
     return int(round(time.time() * 1000))
 
 
+def send_desktop_notification(message):
+    notification = Notify()
+    notification.title = 'pyfilesync'
+    notification.message = message
+    notification.send()
+
+
 def graceful_exit(status=0):
     print('Exiting.')
     exit(status)
@@ -289,9 +308,15 @@ def load_config(config_path):
         print(f'Error: Could not load config file `{config_path}\'.')
         graceful_exit(1)
 
+    # set default update interval if not specified
+    if 'update_interval' not in config:
+        default_update_interval = 15
+        print('Warning: Update interval not specified in config, using default value '
+              f'{default_update_interval}.')
+        config['update_interval'] = default_update_interval
+
     # ensure config format valid
     # ensure all remotes are named and there are no duplicates
-    # TODO: proper validation
     remote_names = set()
     for remote in config['remotes']:
         if remote['name'] is None or remote['name'] == '':

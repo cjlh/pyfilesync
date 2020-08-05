@@ -1,5 +1,6 @@
 Short
 -----
+[ ] Test notifications on MacOS
 [ ] Make remote names required
 [ ] Ensure remote name <1024 bytes
 [x] Implement FileIndex requests
