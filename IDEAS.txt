@@ -1,0 +1,11 @@
+Global config structure
+- Aliases for remote machines
+
+Per-dir config structure
+- ?
+
+- JSON config
+- Remote names are required
+
+- Maybe implement permissions?
+  * Ability to add a folder from any of the clients, and designate write access to all/many/none
