@@ -1,12 +1,9 @@
+Short
+-----
 [ ] Make remote names required
 [ ] Ensure remote name <1024 bytes
 [x] Implement FileIndex requests
 [ ] Print errors and warnings using proper lib
-[ ] SSL - requires learning stuff
-[ ] IP update for peers on change
-[ ] Think about deletions/renames
-    - $ pyfilesync rm <file>
-    - $ pyfilesync mv <current> <new>
 [ ] Standardise use of 'filename' vs 'filepath' in update(), line 64
 [ ] Handle os.path.join with FileIndex keys
     - e.g. if joins with '\' and receive FI from OS with '/', how to handle this?
@@ -14,3 +11,15 @@
     -> download first
 [ ] Look into e.g. ../../ in filenames received as FI and in FS
 [ ] Extend recv for arbitrary size files
+
+Medium
+------
+[ ] Think about deletions/renames
+    - $ pyfilesync rm <file>
+    - $ pyfilesync mv <current> <new>
+[ ] IP update for peers on change
+[ ] SSL - requires learning stuff
+
+Long
+----
+[ ] Send only changes in files?
