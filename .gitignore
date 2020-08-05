@@ -9,3 +9,5 @@ venv/
 # Vim swapfiles
 */**/*.swp
 
+# Development files
+dev/
