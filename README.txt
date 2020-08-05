@@ -4,7 +4,7 @@ Status:
 - DO NOT USE. Will only sync top-level files.
 
 What it is:
-- Sync selected library directories between computers (e.g. books, music, config files) peer-to-peer.
+- Sync selected library directories between computers (e.g. books, music, dotfiles) peer-to-peer.
 
 What it isn't:
 - A VCS. No versioning facilities built in.
@@ -19,3 +19,9 @@ Setup:
 - To copy new dir to peers:
   * Specify local dir as target directory
   * Follow remote step for other PCs
+
+
+Example setups:
+- Publisher-subscriber/master-slave:
+  * Publisher hosts directory with no peers configured.
+  * Subscribers configure remote directory with publisher as peer, with optional additional peers.
