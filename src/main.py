@@ -6,7 +6,7 @@ import time
 from utils import graceful_exit
 from peers import AliasStore
 from files import FileServer
-from remote import Remote
+from remotes import Remote
 
 
 def load_config(config_path):

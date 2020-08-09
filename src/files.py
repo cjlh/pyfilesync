@@ -11,9 +11,24 @@ class File():
         self.abs_path = os.path.join(root_dir, rel_path)
         self.rel_path = rel_path
         self.md5sum = None
+        self.lm_time = None
+
+    def update_lm_time(self):
+        self.lm_time = os.path.getmtime(self.abs_path)
+
+    def update_md5sum(self):
+        with open(self.abs_path, mode='rb') as f:
+            d = hashlib.md5()
+            for buf in iter(partial(f.read, 128), b''):
+                d.update(buf)
+        self.md5sum = d.hexdigest()
 
     def get_lm_time(self):
-        return os.path.getmtime(self.abs_path)
+        if self.lm_time is None:
+            self.update_lm_time()
+            return self.lm_time
+        else:
+            return self.lm_time
 
     def get_md5sum(self):
         if self.md5sum is None:
@@ -25,13 +40,6 @@ class File():
     def read_data(self):
         with open(self.abs_path, 'rb') as f:
             return f.read()
-
-    def update_md5sum(self):
-        with open(self.abs_path, mode='rb') as f:
-            d = hashlib.md5()
-            for buf in iter(partial(f.read, 128), b''):
-                d.update(buf)
-        self.md5sum = d.hexdigest()
 
     def to_dict(self):
         return {
@@ -47,14 +55,24 @@ class FileIndex():
     def __init__(self, root_dir):
         self.root_dir = root_dir
         self.files = {}
-        self.update()
+        self.build()
+
+    def build(self):
+        for path, _, filenames in os.walk(self.root_dir):
+            for filename in filenames:
+                filepath = os.path.join(path,
+                                        filename)[len(self.root_dir) + 1:]
+                self.files[filepath] = File(self.root_dir, filepath)
 
     def update(self):
         for path, _, filenames in os.walk(self.root_dir):
             for filename in filenames:
                 filepath = os.path.join(path,
                                         filename)[len(self.root_dir) + 1:]
-                self.files[filepath] = File(self.root_dir, filepath)
+                if filepath in self.files:
+                    if (os.path.getmtime(os.path.join(self.root_dir, filepath)) >
+                            self.files[filepath].get_lm_time()):
+                        self.files[filepath] = File(self.root_dir, filepath)
 
     def is_filepath_in_index(self, filepath):
         return filepath in self.files
