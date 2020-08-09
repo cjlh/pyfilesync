@@ -6,16 +6,12 @@ from files import FileIndex
 
 
 class Remote():
-    def __init__(self, local_path, peers, name=None):
+    def __init__(self, local_path, peers, name):
         self.name = name
         self.peer_aliases = peers
         self.path = local_path
         self.dir_name = os.path.basename(local_path)
         self.file_index = FileIndex(local_path)
-
-    def get_name_string(self):
-        return f"remote `{self.name}'" if \
-            self.name is not None else 'unnamed remote'
 
     def update(self, alias_store, lpad=''):
         # 1: connect to remote hosts, request json-ified FileIndex objects
@@ -24,7 +20,9 @@ class Remote():
         for alias in self.peer_aliases:
             peer = alias_store.get_peer(alias)
             try:
-                file_indexes[alias] = peer.recv_file_index(self.name, lpad=lpad)
+                peer_file_index = peer.recv_file_index(self.name, lpad=lpad)
+                if peer_file_index is not None:
+                    file_indexes[alias] = peer_file_index
             except (ConnectionRefusedError) as e:
                 # TODO: use e?
                 print(f'{lpad}Warning: Connection refused by peer `{peer.name}\' for '

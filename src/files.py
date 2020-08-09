@@ -114,8 +114,14 @@ class FileServer(Thread):
             print('Waiting for connection...')
             conn, client_addr = sock.accept()
             print(f'Connection from {client_addr}')
+            # We know requests will be <1024
             data = conn.recv(1024).decode('utf-8')
-            parsed_data = json.loads(data)
+            try:
+                parsed_data = json.loads(data)
+            except json.decoder.JSONDecodeError:
+                print('  Error: Request could not be parsed as JSON. Abandoning.')
+                conn.close()
+                continue
             print(f'  [recv] request: {parsed_data}')
             # TODO: validate request
             if 'remote_name' in parsed_data:
@@ -128,13 +134,21 @@ class FileServer(Thread):
             if parsed_data['request_type'] == 0:
                 # request FileIndex
                 remote_name = parsed_data['remote_name']
-                response_data = self.file_indexes[remote_name].jsonify()
+                response_data = self.file_indexes[remote_name].jsonify().encode('utf-8')
+                response_size_data = f'{{"response_size": {len(response_data)}}}'.encode(
+                    'utf-8')
+                print(f'  [send] response size: {response_size_data}')
+                conn.sendall(response_size_data)
                 print(f'  [send] response: {response_data}')
-                conn.sendall(response_data.encode('utf-8'))
+                conn.sendall(response_data)
             elif parsed_data['request_type'] == 1:
                 # request file data
                 filepath = parsed_data['filepath']
                 file_data = self.file_indexes[remote_name].get_file(filepath).read_data()
+                response_size_data = f'{{"response_size": {len(file_data)}}}'.encode(
+                    'utf-8')
+                print(f'  [send] response size: {response_size_data}')
+                conn.sendall(response_size_data)
                 print(f'  [send] reponse: {file_data}')
                 conn.sendall(file_data)
             else:

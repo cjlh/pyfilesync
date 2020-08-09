@@ -15,13 +15,12 @@ Setup:
   * virtualenv -p python3 venv && source venv/bin/activate
   * pip install -r requirements.txt
 - To pull new dir from peers:
-  * Specify non-existent or empty target directory, will pull from peers
+  * Specify non-existent or empty target directory, will pull from peers.
 - To copy new dir to peers:
-  * Specify local dir as target directory
-  * Follow remote step for other PCs
+  * Specify local dir as target directory.
+  * Follow remote step for other PCs.
 
-
-Example setups:
+Example configurations:
 - Publisher-subscriber/master-slave:
   * Publisher hosts directory with no peers configured.
   * Subscribers configure remote directory with publisher as peer, with optional additional peers.

@@ -82,7 +82,7 @@ def main(config_path):
 
     # 4: check for updates
     for remote in remotes:
-        print(f'Checking for updates on {remote.get_name_string()}...')
+        print(f'Checking for updates on {remote.name}...')
         # remote.file_index.print_files(lpad='  ')
         remote.update(alias_store, lpad='  ')
 

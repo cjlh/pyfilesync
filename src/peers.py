@@ -8,6 +8,21 @@ class Peer():
         self.ip_address = ip_address
         self.port = port
 
+    def _get_response_size(self, sock, lpad=''):
+        """Receives and parses size of response to recv from server"""
+        metadata = sock.recv(1024).decode('utf-8')
+        try:
+            metadata = json.loads(metadata)
+        except json.decoder.JSONDecodeError:
+            print(f'{lpad}Error: Response could not be parsed as JSON. Abandoning.')
+            # TODO: throw exception?
+            return None
+        if not('response_size' in metadata and type(metadata['response_size']) == int):
+            print(f'{lpad}Error: Response size could not be parsed from server response.')
+            # TODO: throw exception?
+            return None
+        return metadata['response_size']
+
     def recv_file_index(self, remote_name, lpad=''):
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         sock.connect((self.ip_address, self.port))
@@ -16,9 +31,18 @@ class Peer():
         print(f'{lpad}[send] request to {self.name} at ({self.ip_address}, {self.port}): '
               f'{req_data}')
         sock.sendall(req_data)
-        res_data = sock.recv(1024).decode('utf-8')
+        response_size = self._get_response_size(sock, lpad=lpad)
+        if response_size is None:
+            return None
+        res_data = sock.recv(response_size).decode('utf-8')
         print(f'{lpad}[recv] response: {res_data}')
-        return json.loads(res_data)
+        try:
+            res_json = json.loads(res_data)
+        except json.decoder.JSONDecodeError:
+            print(f'{lpad}Error: Received FileIndex could not be parsed as JSON.')
+            # TODO: throw exception?
+            return None
+        return res_json
 
     def recv_file_data(self, remote_name, filepath, lpad=''):
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -28,8 +52,11 @@ class Peer():
         print(f'{lpad}[send] request to {self.name} at ({self.ip_address}, {self.port}): '
               f'{req_data}')
         sock.sendall(req_data)
+        response_size = self._get_response_size(sock, lpad=lpad)
+        if response_size is None:
+            return None
         # receive raw bytes
-        res_data = sock.recv(1024)
+        res_data = sock.recv(response_size)
         print(f'{lpad}[recv] response: {res_data}')
         return res_data
 

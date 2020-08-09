@@ -1,9 +1,9 @@
 Short
 -----
 [ ] Test notifications on MacOS
+[x] Split FI update into build/update
 [x] Split up monolithic main.py
-[ ] Make remote names required
-[ ] Ensure remote name <1024 bytes
+[x] Make remote names required
 [x] Implement FileIndex requests
 [ ] Print errors and warnings using proper lib
 [ ] Standardise use of 'filename' vs 'filepath' in update(), line 64
@@ -12,10 +12,11 @@ Short
 [x] Move before download or download before move?
     -> download first
 [ ] Look into e.g. ../../ in filenames received as FI and in FS
-[ ] Extend recv for arbitrary size files
+[x] Extend recv for arbitrary size files
 
 Medium
 ------
+[ ] Write tests
 [ ] Think about deletions/renames
     - $ pyfilesync rm <file>
     - $ pyfilesync mv <current> <new>
