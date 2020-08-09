@@ -35,19 +35,19 @@ class Remote():
         # iterate, combine into one dict with latest lm and peer
         latest_changes = {}
         for alias, file_index in file_indexes.items():
-            for filename, details in file_index.items():
-                # TODO: check filename is not exploitative
-                # os.dir.join(self.path, filename) is subdir of self.path
-                if (filename not in latest_changes or latest_changes[filename][
+            for filepath, details in file_index.items():
+                # TODO: check filepath is not exploitative
+                # os.dir.join(self.path, filepath) is subdir of self.path
+                if (filepath not in latest_changes or latest_changes[filepath][
                         'last_modified'] < details['last_modified']):
-                    latest_changes[filename] = {
+                    latest_changes[filepath] = {
                         'md5sum': details['md5sum'],
                         'last_modified': details['last_modified'],
                         'peer_alias': alias
                     }
             # all_filepaths = all_filepaths.union(set(file_index.keys()))
         print(f'{lpad}Latest changes from peers: {latest_changes}')
-        # get all filenames
+        # get all filepaths
         all_filepaths = set(latest_changes.keys())
         for filepath, file in self.file_index.items():
             all_filepaths.add(filepath)
@@ -77,26 +77,26 @@ class Remote():
         os.makedirs(temp_dir, exist_ok=True)
         backup_dir = os.path.join(temp_dir, 'backup')
         os.makedirs(backup_dir)
-        for filename in changed_files:
+        for filepath in changed_files:
             # TODO: makedirs for files that are in a subdir
-            target_peer = alias_store.get_peer(latest_changes[filename]['peer_alias'])
-            file_data = target_peer.recv_file_data(self.name, filename, lpad=lpad)
-            temp_path = os.path.join(temp_dir, filename)
+            target_peer = alias_store.get_peer(latest_changes[filepath]['peer_alias'])
+            file_data = target_peer.recv_file_data(self.name, filepath, lpad=lpad)
+            temp_path = os.path.join(temp_dir, filepath)
             with open(temp_path, 'wb') as f:
                 f.write(file_data)
-            print(f'{lpad}Wrote updated file `{filename}\' to {temp_path} '
+            print(f'{lpad}Wrote updated file `{filepath}\' to {temp_path} '
                   f'({len(file_data)} bytes).')
         # 4: move old files to temp backup folder, move new files to folder
-        for filename in changed_files:
+        for filepath in changed_files:
             # move old if exists
-            target_path = os.path.join(self.path, filename)
+            target_path = os.path.join(self.path, filepath)
             if os.path.exists(target_path):
-                os.rename(target_path, os.path.join(backup_dir, filename))
+                os.rename(target_path, os.path.join(backup_dir, filepath))
             # move new
-            os.rename(os.path.join(temp_dir, filename), target_path)
-            print(f'{lpad}Updated file `{filename}.\'')
-            update_message = f"{self.name}: Updated file {filename} from peer " \
-                             f"{latest_changes[filename]['peer_alias']}"
+            os.rename(os.path.join(temp_dir, filepath), target_path)
+            print(f'{lpad}Updated file `{filepath}.\'')
+            update_message = f"{self.name}: Updated file {filepath} from peer " \
+                             f"{latest_changes[filepath]['peer_alias']}"
             send_desktop_notification(update_message)
         # 5: update FileIndex
         self.file_index.update()

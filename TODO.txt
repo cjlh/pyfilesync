@@ -6,7 +6,7 @@ Short
 [x] Make remote names required
 [x] Implement FileIndex requests
 [ ] Print errors and warnings using proper lib
-[ ] Standardise use of 'filename' vs 'filepath' in update(), line 64
+[x] Standardise use of 'filename' vs 'filepath' in Remote update()
 [ ] Handle os.path.join with FileIndex keys
     - e.g. if joins with '\' and receive FI from OS with '/', how to handle this?
 [x] Move before download or download before move?
