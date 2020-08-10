@@ -9,6 +9,7 @@ Short
 [x] Standardise use of 'filename' vs 'filepath' in Remote update()
 [ ] Handle os.path.join with FileIndex keys
     - e.g. if joins with '\' and receive FI from OS with '/', how to handle this?
+    -> use pathlib
 [x] Move before download or download before move?
     -> download first
 [ ] Look into e.g. ../../ in filenames received as FI and in FS
@@ -20,7 +21,9 @@ Medium
 [ ] Think about deletions/renames
     - $ pyfilesync rm <file>
     - $ pyfilesync mv <current> <new>
-[ ] Tray icon
+    - op_queue - should this be serialised so a complete operation history is stored?
+[#] Tray icon
+    -> not worth it, pystray has issues with virtualenv and makes code sligthly messier
 [ ] IP update for peers on change
 [ ] SSL - requires learning stuff
 

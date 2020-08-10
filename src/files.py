@@ -55,6 +55,8 @@ class FileIndex():
     def __init__(self, root_dir):
         self.root_dir = root_dir
         self.files = {}
+        # TODO: think about an operation queue like this
+        self.op_queue = []
         self.build()
 
     def build(self):

@@ -11,3 +11,4 @@ venv/
 
 # Development files
 dev/
+test/test_data/

@@ -29,7 +29,7 @@ class Remote():
                       f'remote `{self.name}\' at {peer.ip_address}:{peer.port}. Peer may '
                       'be offline.')
         if len(file_indexes) == 0:
-            print(f'{lpad}No peers available for update. Abandoning.')
+            print(f'{lpad}No peers available for update.')
             return
         # 2: compute changes between dicts based on md5 hashes
         # iterate, combine into one dict with latest lm and peer
