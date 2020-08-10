@@ -9,7 +9,8 @@ def get_timestamp():
 
 def send_desktop_notification(message):
     notification = Notify()
-    notification.title = 'pyfilesync'
+    notification.application_name = 'pyfilesync'
+    notification.title = 'File updated'
     notification.message = message
     notification.send()
 
