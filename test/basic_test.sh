@@ -15,16 +15,18 @@ mkdir test_data/server_1
 mkdir test_data/server_2
 
 # create files for testing
+echo 'Creating test files...'
 # server 1
 echo 'abcdefghijklmnopqrstuvwxyz' > test_data/server_1/alphabet.txt
+sleep 2
 echo 'this_will_be_overwritten' > test_data/server_1/a_file
 # server 2
-# mkdir test_data/server_2/notes
-# echo 'foo' > test_data/server_2/notes/1.txt
-# echo 'bar' > test_data/server_2/notes/2.txt
-# echo 'baz' > test_data/server_2/notes/3.txt
-# echo 'qux' >> test_data/server_2/notes/3.txt
-# echo 'newer_note' > test_data/server_2/a_file
+mkdir test_data/server_2/notes
+echo 'foo' > test_data/server_2/notes/1.txt
+echo 'bar' > test_data/server_2/notes/2.txt
+echo 'baz' > test_data/server_2/notes/3.txt
+echo 'qux' >> test_data/server_2/notes/3.txt
+echo 'newer_note' > test_data/server_2/a_file
 # print contents
 echo 'test dir contents:'
 echo 'server 1:'
@@ -45,7 +47,7 @@ python3 ../src/main.py --config test_data/config_2.json &
 proc_2=$!
 
 # sleep to accommodate transfer then kill
-sleep 2
+sleep 5  # after ~5 seconds server_1 will start update loop to receive new files from server_2
 kill $proc_1
 kill $proc_2
 sleep 1
@@ -53,6 +55,10 @@ echo ''
 
 # compare contents
 if [[ $(diff -r test_data/server_1 test_data/server_2) ]]; then
+    echo 'server 1:'
+    tree test_data/server_1
+    echo 'server 2:'
+    tree test_data/server_2
     echo "TESTS FAILED: Directory contents differ."
 else
     echo "TESTS PASSED!"

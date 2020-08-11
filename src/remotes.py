@@ -81,6 +81,8 @@ class Remote():
             # TODO: makedirs for files that are in a subdir
             target_peer = alias_store.get_peer(latest_changes[filepath]['peer_alias'])
             file_data = target_peer.recv_file_data(self.name, filepath, lpad=lpad)
+            self._ensure_dirs_exist(temp_dir, filepath)
+            # write file
             temp_path = os.path.join(temp_dir, filepath)
             with open(temp_path, 'wb') as f:
                 f.write(file_data)
@@ -91,8 +93,10 @@ class Remote():
             # move old if exists
             target_path = os.path.join(self.path, filepath)
             if os.path.exists(target_path):
+                self._ensure_dirs_exist(backup_dir, filepath)
                 os.rename(target_path, os.path.join(backup_dir, filepath))
             # move new
+            self._ensure_dirs_exist(self.path, filepath)
             os.rename(os.path.join(temp_dir, filepath), target_path)
             print(f'{lpad}Updated file `{filepath}.\'')
             update_message = f"{self.name}: Updated file {filepath} from peer " \
@@ -100,3 +104,9 @@ class Remote():
             send_desktop_notification(update_message)
         # 5: update FileIndex
         self.file_index.update()
+
+    def _ensure_dirs_exist(self, target_dir, filepath):
+        # create any necessary new directories
+        sub_path = os.path.split(filepath)[0]
+        if sub_path != '':
+            os.makedirs(os.path.join(target_dir, sub_path), exist_ok=True)

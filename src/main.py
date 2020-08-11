@@ -28,6 +28,13 @@ def load_config(config_path):
         print("Warning: Update interval not specified in config, using default value "
               f"{defaults['update_interval']}.")
         config['update_interval'] = defaults['update_interval']
+    else:
+        try:
+            config['update_interval'] = float(config['update_interval'])
+        except ValueError:
+            print("Warning: Invalid update interval in config, using default value "
+                  f"{defaults['update_interval']}.")
+            config['update_interval'] = defaults['update_interval']
 
     # set default port if not specified
     if 'port' not in config:

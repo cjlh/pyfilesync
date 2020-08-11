@@ -1,23 +1,23 @@
 Short
 -----
-[ ] Test notifications on MacOS
+[x] Test notifications on MacOS
 [x] Split FI update into build/update
 [x] Split up monolithic main.py
 [x] Make remote names required
 [x] Implement FileIndex requests
 [ ] Print errors and warnings using proper lib
 [x] Standardise use of 'filename' vs 'filepath' in Remote update()
-[ ] Handle os.path.join with FileIndex keys
+[x] Handle os.path.join with FileIndex keys
     - e.g. if joins with '\' and receive FI from OS with '/', how to handle this?
     -> use pathlib
 [x] Move before download or download before move?
     -> download first
-[ ] Look into e.g. ../../ in filenames received as FI and in FS
+[x] Look into e.g. ../../ in filenames received as FI and in FS
 [x] Extend recv for arbitrary size files
 
 Medium
 ------
-[ ] Write tests
+[-] Write tests
 [ ] Think about deletions/renames
     - $ pyfilesync rm <file>
     - $ pyfilesync mv <current> <new>

@@ -1,10 +1,11 @@
 pyfilesync
 
 Status:
-- DO NOT USE. Will only sync top-level files.
+- NOT SECURE. Known vulnerabilities when checking for updates.
 
 What it is:
 - Sync selected library directories between computers (e.g. books, music, dotfiles) peer-to-peer.
+- Written for and tested on Linux and macOS.
 
 What it isn't:
 - A VCS. No versioning facilities built in.

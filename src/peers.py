@@ -12,13 +12,14 @@ class Peer():
         """Receives and parses size of response to recv from server"""
         metadata = b''
         while not(len(metadata) > 2 and metadata.decode('utf-8')[0] == '{' and
-                  metadata.decode('utf-8')[-1] == '}'):
+                  metadata.decode('utf-8')[-1] == '}') and len(metadata) < 30:
             metadata += sock.recv(1)
         metadata = metadata.decode('utf-8')
         try:
             metadata = json.loads(metadata)
         except json.decoder.JSONDecodeError:
-            print(f'{lpad}Error: Response {metadata} could not be parsed as JSON. Abandoning.')
+            print(f'{lpad}Error: Response {metadata} could not be parsed as JSON. '
+                  'Abandoning.')
             # TODO: throw exception?
             return None
         if not('response_size' in metadata and type(metadata['response_size']) == int):

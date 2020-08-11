@@ -1,6 +1,6 @@
 {
     "port": 6688,
-    "update_interval": 15,
+    "update_interval": 0.08,
     "aliases": [
         {
             "name": "test_2",
